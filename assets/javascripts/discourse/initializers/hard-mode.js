@@ -27,12 +27,24 @@ const BLOCKED_SELECTORS = [
   ".d-header .icons a",
 ];
 
-// Track if the click was initiated by keyboard (Enter/Space)
-let lastKeyWasActivation = false;
+function isRealMouseClick(event) {
+  // Programmatic clicks (from keyboard shortcuts) have detail=0 or no coordinates
+  // Real mouse clicks have detail >= 1 and real screen coordinates
+  if (event.detail === 0) {
+    return false;
+  }
+
+  // Also check if it's a synthetic click (no real pointer position)
+  if (event.screenX === 0 && event.screenY === 0) {
+    return false;
+  }
+
+  return true;
+}
 
 function shouldBlockClick(event) {
-  // Allow keyboard-initiated clicks (Enter/Space on focused element)
-  if (lastKeyWasActivation) {
+  // Only block real mouse clicks, not keyboard-triggered ones
+  if (!isRealMouseClick(event)) {
     return false;
   }
 
@@ -101,19 +113,10 @@ function initializeHardMode(api) {
 
   const hardModeService = api.container.lookup("service:hard-mode");
 
-  // Track keyboard activation keys
+  // Toggle hard mode with Ctrl+Shift+H
   document.addEventListener(
     "keydown",
     (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        lastKeyWasActivation = true;
-        // Reset after a short delay
-        setTimeout(() => {
-          lastKeyWasActivation = false;
-        }, 100);
-      }
-
-      // Toggle hard mode with Ctrl+Shift+H
       if (event.ctrlKey && event.shiftKey && event.key === "H") {
         event.preventDefault();
         hardModeService.toggle();

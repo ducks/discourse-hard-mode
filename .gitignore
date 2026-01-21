@@ -1,0 +1,4 @@
+node_modules/
+.gems/
+*.log
+.DS_Store

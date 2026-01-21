@@ -3,7 +3,7 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 // Selectors for elements that should be blocked in hard mode
 const BLOCKED_SELECTORS = [
   // Topic list navigation
-  ".topic-list-item a",
+  ".topic-list-item",
   ".topic-list .main-link a",
   ".category-list a",
   ".latest-topic-list-item a",
@@ -27,13 +27,19 @@ const BLOCKED_SELECTORS = [
   ".d-header .icons a",
 ];
 
+// Track if the click was initiated by keyboard (Enter/Space)
+let lastKeyWasActivation = false;
+
 function shouldBlockClick(event) {
+  // Allow keyboard-initiated clicks (Enter/Space on focused element)
+  if (lastKeyWasActivation) {
+    return false;
+  }
+
   const target = event.target;
 
   // Allow clicks on hard mode controls
-  if (
-    target.closest(".hard-mode-hud, .hard-mode-indicator, .hard-mode-toggle")
-  ) {
+  if (target.closest(".hard-mode-toggle")) {
     return false;
   }
 
@@ -49,6 +55,11 @@ function shouldBlockClick(event) {
 
   // Allow clicks on modals
   if (target.closest(".modal, .d-modal")) {
+    return false;
+  }
+
+  // Allow clicks on keyboard shortcut help modal
+  if (target.closest(".keyboard-shortcuts-modal")) {
     return false;
   }
 
@@ -90,6 +101,27 @@ function initializeHardMode(api) {
 
   const hardModeService = api.container.lookup("service:hard-mode");
 
+  // Track keyboard activation keys
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        lastKeyWasActivation = true;
+        // Reset after a short delay
+        setTimeout(() => {
+          lastKeyWasActivation = false;
+        }, 100);
+      }
+
+      // Toggle hard mode with Ctrl+Shift+H
+      if (event.ctrlKey && event.shiftKey && event.key === "H") {
+        event.preventDefault();
+        hardModeService.toggle();
+      }
+    },
+    true
+  );
+
   // Add click blocker
   document.addEventListener(
     "click",
@@ -109,14 +141,6 @@ function initializeHardMode(api) {
     },
     true
   );
-
-  // Add keyboard shortcut to toggle hard mode (Ctrl+Shift+H)
-  document.addEventListener("keydown", (event) => {
-    if (event.ctrlKey && event.shiftKey && event.key === "H") {
-      event.preventDefault();
-      hardModeService.toggle();
-    }
-  });
 }
 
 export default {

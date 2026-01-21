@@ -1,92 +1,30 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 
-// Selectors for elements that should be blocked in hard mode
-const BLOCKED_SELECTORS = [
-  // Topic list navigation
-  ".topic-list-item",
-  ".topic-list .main-link a",
-  ".category-list a",
-  ".latest-topic-list-item a",
-
-  // Post navigation and actions
-  ".post-stream .topic-post",
-  ".post-controls button",
-  ".post-actions button",
-
-  // Navigation links
-  ".nav-pills a",
-  ".navigation-container a",
-  "#navigation-bar a",
-  ".category-breadcrumb a",
-
-  // Sidebar
-  ".sidebar-section-link",
-
-  // Header navigation
-  ".header-dropdown-toggle",
-  ".d-header .icons a",
-];
-
-function isRealMouseClick(event) {
-  // Programmatic clicks (from keyboard shortcuts) have detail=0 or no coordinates
-  // Real mouse clicks have detail >= 1 and real screen coordinates
+function shouldAllowClick(event) {
+  // Keyboard-triggered clicks have detail === 0
+  // Mouse clicks have detail >= 1
   if (event.detail === 0) {
-    return false;
-  }
-
-  // Also check if it's a synthetic click (no real pointer position)
-  if (event.screenX === 0 && event.screenY === 0) {
-    return false;
-  }
-
-  return true;
-}
-
-function shouldBlockClick(event) {
-  // Only block real mouse clicks, not keyboard-triggered ones
-  if (!isRealMouseClick(event)) {
-    return false;
+    return true;
   }
 
   const target = event.target;
 
-  // Allow clicks on hard mode controls
-  if (target.closest(".hard-mode-toggle")) {
-    return false;
-  }
-
-  // Allow clicks on form elements
-  if (target.closest("input, textarea, select, button[type='submit']")) {
-    return false;
-  }
-
-  // Allow clicks on composer
+  // Allow clicks in composer (need to type/format)
   if (target.closest("#reply-control, .d-editor")) {
-    return false;
-  }
-
-  // Allow clicks on modals
-  if (target.closest(".modal, .d-modal")) {
-    return false;
-  }
-
-  // Allow clicks on keyboard shortcut help modal
-  if (target.closest(".keyboard-shortcuts-modal")) {
-    return false;
-  }
-
-  // Check if click is on a blocked element
-  for (const selector of BLOCKED_SELECTORS) {
-    if (target.closest(selector)) {
-      return true;
-    }
-  }
-
-  // Block all anchor clicks
-  if (target.closest("a[href]")) {
     return true;
   }
 
+  // Allow form inputs
+  if (target.closest("input, textarea, select")) {
+    return true;
+  }
+
+  // Allow modals (need to interact with dialogs)
+  if (target.closest(".modal, .d-modal")) {
+    return true;
+  }
+
+  // Block everything else (real mouse clicks)
   return false;
 }
 
@@ -125,7 +63,7 @@ function initializeHardMode(api) {
     true
   );
 
-  // Add click blocker
+  // Block ALL mouse clicks (except allowed areas)
   document.addEventListener(
     "click",
     (event) => {
@@ -133,12 +71,10 @@ function initializeHardMode(api) {
         return;
       }
 
-      if (shouldBlockClick(event)) {
+      if (!shouldAllowClick(event)) {
         event.preventDefault();
         event.stopPropagation();
         hardModeService.recordBlockedClick();
-
-        // Visual feedback
         showBlockedFeedback(event.clientX, event.clientY);
       }
     },

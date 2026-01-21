@@ -1,132 +1,3 @@
-// Hard Mode HUD
-.hard-mode-hud {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 280px;
-  background: var(--secondary);
-  border: 2px solid var(--primary);
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  z-index: 9999;
-  font-family: monospace;
-  font-size: 13px;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--primary-low);
-    background: var(--tertiary);
-    color: var(--secondary);
-    border-radius: 6px 6px 0 0;
-  }
-
-  &__title {
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  &__close {
-    background: none;
-    border: none;
-    color: var(--secondary);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 4px;
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
-
-  &__stats {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--primary-low);
-    color: var(--danger);
-    font-weight: bold;
-  }
-
-  &__shortcuts {
-    padding: 8px 12px;
-    max-height: 300px;
-    overflow-y: auto;
-
-    .shortcut-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 4px 0;
-
-      kbd {
-        min-width: 50px;
-        background: var(--primary-low);
-        border: 1px solid var(--primary-medium);
-        border-radius: 3px;
-        padding: 2px 6px;
-        font-size: 11px;
-        text-align: center;
-      }
-
-      span {
-        color: var(--primary-high);
-      }
-    }
-  }
-
-  &__footer {
-    padding: 8px 12px;
-    border-top: 1px solid var(--primary-low);
-    text-align: center;
-    color: var(--primary-medium);
-    font-size: 11px;
-
-    kbd {
-      background: var(--primary-low);
-      border: 1px solid var(--primary-medium);
-      border-radius: 3px;
-      padding: 1px 4px;
-    }
-  }
-}
-
-// Minimized indicator
-.hard-mode-indicator {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--tertiary);
-  color: var(--secondary);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-
-  .d-icon {
-    font-size: 18px;
-  }
-
-  .blocked-count {
-    font-size: 10px;
-    font-weight: bold;
-    font-family: monospace;
-  }
-}
-
 // Blocked click feedback
 .hard-mode-blocked-feedback {
   position: fixed;
@@ -149,33 +20,46 @@
 }
 
 @keyframes hard-mode-shake {
-  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-  25% { transform: translate(-50%, -50%) rotate(-5deg); }
-  75% { transform: translate(-50%, -50%) rotate(5deg); }
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  25% {
+    transform: translate(-50%, -50%) rotate(-5deg);
+  }
+  75% {
+    transform: translate(-50%, -50%) rotate(5deg);
+  }
 }
 
-// User menu toggle button
-.hard-mode-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary);
+// Toggle toast notification
+.hard-mode-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: var(--secondary);
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: monospace;
+  z-index: 10000;
+  animation: hard-mode-toast-in 0.2s ease;
 
-  &:hover {
-    background: var(--primary-low);
+  &.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s;
   }
+}
 
-  .d-icon {
-    color: var(--tertiary);
+@keyframes hard-mode-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-
-  &.is-enabled {
-    background: var(--tertiary-low);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

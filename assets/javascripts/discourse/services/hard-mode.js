@@ -7,7 +7,6 @@ export default class HardModeService extends Service {
   @service siteSettings;
 
   @tracked enabled = false;
-  @tracked showHud = false;
   @tracked blockedClicks = 0;
 
   constructor() {
@@ -21,20 +20,28 @@ export default class HardModeService extends Service {
     }
 
     const stored = localStorage.getItem(STORAGE_KEY);
-    this.enabled = stored === null ? false : stored === "true";
+    this.enabled = stored === "true";
   }
 
   toggle() {
     this.enabled = !this.enabled;
     localStorage.setItem(STORAGE_KEY, this.enabled);
 
-    if (this.enabled) {
-      this.showHud = true;
-    }
+    // Show toast notification
+    const message = this.enabled ? "Hard Mode: ON" : "Hard Mode: OFF";
+    this.showToast(message);
   }
 
-  toggleHud() {
-    this.showHud = !this.showHud;
+  showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "hard-mode-toast";
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add("fade-out");
+      setTimeout(() => toast.remove(), 300);
+    }, 1500);
   }
 
   recordBlockedClick() {

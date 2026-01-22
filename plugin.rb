@@ -28,9 +28,4 @@ after_initialize do
   add_to_serializer(:current_user, :hard_mode_shame_count) do
     object.custom_fields["hard_mode_shame_count"].to_i
   end
-
-  # Add to post serializer via the user so we can display on posts
-  add_to_serializer(:post, :hard_mode_shame_count) do
-    object.user&.custom_fields&.dig("hard_mode_shame_count").to_i
-  end
 end

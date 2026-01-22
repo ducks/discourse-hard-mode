@@ -42,17 +42,6 @@ function showBlockedFeedback(x, y) {
   }, 500);
 }
 
-function getShameTitle(count) {
-  if (count >= 1000) {
-    return `${count} blocked clicks - Platinum Shame`;
-  } else if (count >= 500) {
-    return `${count} blocked clicks - Gold Shame`;
-  } else if (count >= 100) {
-    return `${count} blocked clicks - Silver Shame`;
-  }
-  return `${count} blocked clicks in Hard Mode`;
-}
-
 function initializeHardMode(api) {
   const siteSettings = api.container.lookup("service:site-settings");
 
@@ -91,25 +80,6 @@ function initializeHardMode(api) {
     },
     true
   );
-
-  // Add shame badge using the modern poster-name-icons transformer
-  api.registerValueTransformer("poster-name-icons", ({ value, context }) => {
-    const shameCount = context.post?.hard_mode_shame_count;
-
-    if (!shameCount || shameCount === 0) {
-      return value;
-    }
-
-    return [
-      ...value,
-      {
-        icon: "mouse-pointer",
-        className: "hard-mode-shame-icon",
-        text: String(shameCount),
-        title: getShameTitle(shameCount),
-      },
-    ];
-  });
 }
 
 export default {

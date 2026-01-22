@@ -1,0 +1,6 @@
+en:
+  js:
+    hard_mode:
+      blocked_clicks_label:
+        one: "blocked click"
+        other: "blocked clicks"

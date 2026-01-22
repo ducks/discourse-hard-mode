@@ -1,6 +1,4 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { htmlSafe } from "@ember/template";
-import { iconHTML } from "discourse/lib/icon-library";
 
 function shouldAllowClick(event) {
   // Keyboard-triggered clicks have detail === 0
@@ -44,6 +42,17 @@ function showBlockedFeedback(x, y) {
   }, 500);
 }
 
+function getShameTitle(count) {
+  if (count >= 1000) {
+    return `${count} blocked clicks - Platinum Shame`;
+  } else if (count >= 500) {
+    return `${count} blocked clicks - Gold Shame`;
+  } else if (count >= 100) {
+    return `${count} blocked clicks - Silver Shame`;
+  }
+  return `${count} blocked clicks in Hard Mode`;
+}
+
 function initializeHardMode(api) {
   const siteSettings = api.container.lookup("service:site-settings");
 
@@ -83,33 +92,23 @@ function initializeHardMode(api) {
     true
   );
 
-  // Add shame badge to post names
-  api.decorateWidget("poster-name:after", (helper) => {
-    const post = helper.getModel();
-    const shameCount = post?.hard_mode_shame_count;
+  // Add shame badge using the modern poster-name-icons transformer
+  api.registerValueTransformer("poster-name-icons", ({ value, context }) => {
+    const shameCount = context.post?.hard_mode_shame_count;
 
     if (!shameCount || shameCount === 0) {
-      return;
+      return value;
     }
 
-    // Calculate shame tier
-    let tier = "bronze";
-    if (shameCount >= 1000) {
-      tier = "platinum";
-    } else if (shameCount >= 500) {
-      tier = "gold";
-    } else if (shameCount >= 100) {
-      tier = "silver";
-    }
-
-    return helper.rawHtml(
-      htmlSafe(
-        `<span class="hard-mode-shame-badge" data-shame-tier="${tier}" title="${shameCount} blocked mouse clicks in Hard Mode">
-          ${iconHTML("mouse-pointer")}
-          <span class="shame-count">${shameCount}</span>
-        </span>`
-      )
-    );
+    return [
+      ...value,
+      {
+        icon: "mouse-pointer",
+        className: "hard-mode-shame-icon",
+        text: String(shameCount),
+        title: getShameTitle(shameCount),
+      },
+    ];
   });
 }
 

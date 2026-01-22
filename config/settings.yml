@@ -1,4 +1,0 @@
-plugins:
-  hard_mode_enabled:
-    default: true
-    client: true

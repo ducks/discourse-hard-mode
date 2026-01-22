@@ -1,30 +1,24 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 function shouldAllowClick(event) {
-  // Keyboard-triggered clicks have detail === 0
-  // Mouse clicks have detail >= 1
   if (event.detail === 0) {
     return true;
   }
 
   const target = event.target;
 
-  // Allow clicks in composer (need to type/format)
   if (target.closest("#reply-control, .d-editor")) {
     return true;
   }
 
-  // Allow form inputs
   if (target.closest("input, textarea, select")) {
     return true;
   }
 
-  // Allow modals (need to interact with dialogs)
   if (target.closest(".modal, .d-modal")) {
     return true;
   }
 
-  // Block everything else (real mouse clicks)
   return false;
 }
 
@@ -43,15 +37,8 @@ function showBlockedFeedback(x, y) {
 }
 
 function initializeHardMode(api) {
-  const siteSettings = api.container.lookup("service:site-settings");
-
-  if (!siteSettings.hard_mode_enabled) {
-    return;
-  }
-
   const hardModeService = api.container.lookup("service:hard-mode");
 
-  // Toggle hard mode with Ctrl+Shift+H
   document.addEventListener(
     "keydown",
     (event) => {
@@ -63,7 +50,6 @@ function initializeHardMode(api) {
     true
   );
 
-  // Block ALL mouse clicks (except allowed areas)
   document.addEventListener(
     "click",
     (event) => {

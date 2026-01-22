@@ -63,3 +63,70 @@
     transform: translateY(0);
   }
 }
+
+// Shame badge next to username on posts
+.hard-mode-shame-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: var(--danger);
+  color: var(--secondary);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  vertical-align: middle;
+  cursor: help;
+
+  .d-icon {
+    font-size: 10px;
+    opacity: 0.9;
+  }
+
+  .shame-count {
+    font-family: monospace;
+  }
+
+  // Pulse animation for high shame counts
+  &:has(.shame-count) {
+    animation: shame-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes shame-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// Extra shame styling for different tiers
+.hard-mode-shame-badge {
+  // Bronze tier: 1-99 clicks
+  &[data-shame-tier="bronze"] {
+    background: #cd7f32;
+  }
+
+  // Silver tier: 100-499 clicks
+  &[data-shame-tier="silver"] {
+    background: #c0c0c0;
+    color: var(--primary);
+  }
+
+  // Gold tier: 500-999 clicks
+  &[data-shame-tier="gold"] {
+    background: #ffd700;
+    color: var(--primary);
+  }
+
+  // Platinum tier: 1000+ clicks (maximum shame)
+  &[data-shame-tier="platinum"] {
+    background: linear-gradient(135deg, #e5e4e2 0%, #a8a8a8 50%, #e5e4e2 100%);
+    color: var(--primary);
+    box-shadow: 0 0 8px rgba(229, 228, 226, 0.6);
+  }
+}

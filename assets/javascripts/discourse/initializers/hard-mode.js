@@ -1,4 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
+import { htmlSafe } from "@ember/template";
+import { iconHTML } from "discourse/lib/icon-library";
 
 function shouldAllowClick(event) {
   // Keyboard-triggered clicks have detail === 0
@@ -80,6 +82,35 @@ function initializeHardMode(api) {
     },
     true
   );
+
+  // Add shame badge to post names
+  api.decorateWidget("poster-name:after", (helper) => {
+    const post = helper.getModel();
+    const shameCount = post?.hard_mode_shame_count;
+
+    if (!shameCount || shameCount === 0) {
+      return;
+    }
+
+    // Calculate shame tier
+    let tier = "bronze";
+    if (shameCount >= 1000) {
+      tier = "platinum";
+    } else if (shameCount >= 500) {
+      tier = "gold";
+    } else if (shameCount >= 100) {
+      tier = "silver";
+    }
+
+    return helper.rawHtml(
+      htmlSafe(
+        `<span class="hard-mode-shame-badge" data-shame-tier="${tier}" title="${shameCount} blocked mouse clicks in Hard Mode">
+          ${iconHTML("mouse-pointer")}
+          <span class="shame-count">${shameCount}</span>
+        </span>`
+      )
+    );
+  });
 }
 
 export default {

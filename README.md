@@ -8,7 +8,7 @@ navigation. Train yourself to use Discourse's keyboard shortcuts.
 - Blocks all mouse clicks (except composer, form inputs, and modals)
 - Keyboard-triggered actions work normally (Enter, Space, shortcuts)
 - Shows "Use keyboard!" feedback on blocked clicks
-- Toggle on/off with Ctrl+Shift+H
+- Toggle on/off with Alt+Shift+H
 - Per-user preference stored in localStorage
 
 ## Installation
@@ -20,7 +20,7 @@ navigation. Train yourself to use Discourse's keyboard shortcuts.
 
 ## Usage
 
-Press Ctrl+Shift+H to toggle hard mode. Try to click something. Get rejected.
+Press Alt+Shift+H to toggle hard mode. Try to click something. Get rejected.
 Learn the shortcuts.
 
 ## How It Works

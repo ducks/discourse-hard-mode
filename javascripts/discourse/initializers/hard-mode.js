@@ -42,7 +42,7 @@ function initializeHardMode(api) {
   document.addEventListener(
     "keydown",
     (event) => {
-      if (event.ctrlKey && event.shiftKey && event.key === "H") {
+      if (event.altKey && event.shiftKey && event.key === "H") {
         event.preventDefault();
         hardModeService.toggle();
       }

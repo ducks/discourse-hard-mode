@@ -1,0 +1,7 @@
+{
+  "name": "Discourse Hard Mode",
+  "about_url": "https://github.com/ducks/discourse-hard-mode",
+  "license_url": "https://github.com/ducks/discourse-hard-mode/blob/main/LICENSE",
+  "component": true,
+  "minimum_discourse_version": "3.0.0"
+}
